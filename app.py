@@ -1,6 +1,7 @@
 import os
 from dotenv import load_dotenv
 from langchain_openai import ChatOpenAI
+from langchain.schema import HumanMessage
 
 def main() -> None:
     """
@@ -30,6 +31,14 @@ def main() -> None:
     )
 
     print("🤖 ChatOpenAI instance created successfully!")
+
+    # Test query
+    query = "What is 25 * 4 + 10?"
+    response = chat.invoke(HumanMessage(content=query))  # Call llm.invoke with the query
+
+    # Print the response content
+    print("🤔 Query:", query)
+    print("💡 Response:", response.content)
 
 if __name__ == "__main__":
     load_dotenv()  # Load environment variables from .env file
