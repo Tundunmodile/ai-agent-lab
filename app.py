@@ -1,5 +1,6 @@
 import os
 from dotenv import load_dotenv
+from langchain_openai import ChatOpenAI
 
 def main() -> None:
     """
@@ -19,6 +20,16 @@ def main() -> None:
         return  # Exit early if the token is not found
 
     print("✅ GITHUB_TOKEN loaded successfully!")
+
+    # Create a ChatOpenAI instance
+    chat = ChatOpenAI(
+        model="openai/gpt-4o",
+        temperature=0,  # Deterministic responses
+        base_url="https://models.github.ai/inference",
+        api_key=github_token  # Use the GITHUB_TOKEN from environment variables
+    )
+
+    print("🤖 ChatOpenAI instance created successfully!")
 
 if __name__ == "__main__":
     load_dotenv()  # Load environment variables from .env file
