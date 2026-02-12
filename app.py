@@ -1,7 +1,10 @@
 import os
 from dotenv import load_dotenv
 from langchain_openai import ChatOpenAI
-from langchain.schema import HumanMessage
+from langchain_core.messages import HumanMessage
+from langchain.agents import create_agent
+from langchain_core.tools import Tool
+from datetime import datetime
 
 def main() -> None:
     """
@@ -34,7 +37,7 @@ def main() -> None:
 
     # Test query
     query = "What is 25 * 4 + 10?"
-    response = chat.invoke(HumanMessage(content=query))  # Call llm.invoke with the query
+    response = chat.invoke([HumanMessage(content=query)])  # Wrap HumanMessage in a list
 
     # Print the response content
     print("🤔 Query:", query)
