@@ -1,11 +1,13 @@
+from json import tool
 import os
 from dotenv import load_dotenv
 from langchain_openai import ChatOpenAI
 from langchain_core.messages import HumanMessage
+from langchain.tools import tool
 from langchain.agents import create_agent
-from langchain_core.tools import Tool
 from datetime import datetime
 
+@tool
 def calculator(expression: str) -> str:
     """
     Evaluates a mathematical expression provided as a string.
@@ -25,6 +27,30 @@ def calculator(expression: str) -> str:
         return str(result)
     except Exception as e:
         return f"Error: {e}"
+
+@tool
+def get_current_time() -> str:
+    """
+    Returns the current date and time as a formatted string.
+
+    Returns:
+    str: The current date and time in the format 'YYYY-MM-DD HH:MM:SS'.
+    """
+    from datetime import datetime
+    return datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+
+@tool
+def reverse_string(input_string: str) -> str:
+    """
+    Reverses a given string.
+
+    Parameters:
+    input_string (str): The string to reverse.
+
+    Returns:
+    str: The reversed string.
+    """
+    return input_string[::-1]
 
 def main() -> None:
     """
@@ -55,24 +81,38 @@ def main() -> None:
 
     print("🤖 ChatOpenAI instance created successfully!")
 
-    # Create tools list
-    tools = [
-        Tool(
-            name="Calculator",
-            func=calculator,
-            description="Use this tool to evaluate mathematical expressions. Provide the expression as a string, and it will return the result."
-        )
+    # Define tools
+    tools = [calculator, get_current_time, reverse_string]
+
+    # Create an agent executor
+    agent_executor = create_agent(
+        chat,
+        tools=tools,
+        debug=True,
+        system_prompt="Act as a professional and succinct AI assistant. Provide concise and accurate responses."
+    )
+
+    # Define a list of test queries
+    test_queries = [
+        "What time is it right now?",
+        "What is 25 * 4 + 10?",
+        "Reverse the string 'Hello World'"
     ]
 
-    print("🛠️ Tools initialized successfully!")
+    print("Running example queries:\n")
 
-    # Test query
-    query = "What is 25 * 4 + 10?"
-    response = chat.invoke([HumanMessage(content=query)])  # Wrap HumanMessage in a list
+    # Iterate through each query
+    for query in test_queries:
+        print("📝 Query:", query)
+        print("─" * 50)
+        try:
+            result = agent_executor.invoke({"input": query})
+            print("✅ Result:", result)
+        except Exception as e:
+            print("❌ Error while executing the query:", e)
+        print("\n")  # Add spacing between queries
 
-    # Print the response content
-    print("🤔 Query:", query)
-    print("💡 Response:", response.content)
+    print("🎉 Agent demo complete!")
 
 if __name__ == "__main__":
     load_dotenv()  # Load environment variables from .env file
