@@ -6,6 +6,26 @@ from langchain.agents import create_agent
 from langchain_core.tools import Tool
 from datetime import datetime
 
+def calculator(expression: str) -> str:
+    """
+    Evaluates a mathematical expression provided as a string.
+
+    Parameters:
+    expression (str): The mathematical expression to evaluate.
+
+    Returns:
+    str: The result of the evaluation as a string.
+
+    Note:
+    This function uses eval() for demonstration purposes. Ensure inputs are sanitized
+    in a production environment to avoid security risks.
+    """
+    try:
+        result = eval(expression)  # Evaluate the expression
+        return str(result)
+    except Exception as e:
+        return f"Error: {e}"
+
 def main() -> None:
     """
     Entry point for the Python LangChain AI Agent application.
