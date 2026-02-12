@@ -55,6 +55,17 @@ def main() -> None:
 
     print("🤖 ChatOpenAI instance created successfully!")
 
+    # Create tools list
+    tools = [
+        Tool(
+            name="Calculator",
+            func=calculator,
+            description="Use this tool to evaluate mathematical expressions. Provide the expression as a string, and it will return the result."
+        )
+    ]
+
+    print("🛠️ Tools initialized successfully!")
+
     # Test query
     query = "What is 25 * 4 + 10?"
     response = chat.invoke([HumanMessage(content=query)])  # Wrap HumanMessage in a list
