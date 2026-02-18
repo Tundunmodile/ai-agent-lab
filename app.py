@@ -2,10 +2,13 @@ from json import tool
 import os
 from dotenv import load_dotenv
 from langchain_openai import ChatOpenAI
-from langchain_core.messages import HumanMessage
+from langchain_core.messages import HumanMessage, SystemMessage
 from langchain.tools import tool
 from langchain.agents import create_agent
 from datetime import datetime
+
+
+
 
 @tool
 def calculator(expression: str) -> str:
@@ -81,6 +84,8 @@ def main() -> None:
 
     print("🤖 ChatOpenAI instance created successfully!")
 
+    system_msg = SystemMessage(content="You are a helpful assistant that can perform various tasks using tools. Use the tools when necessary to provide accurate and concise answers.")
+
     # Define tools
     tools = [calculator, get_current_time, reverse_string]
 
@@ -88,8 +93,9 @@ def main() -> None:
     agent_executor = create_agent(
         chat,
         tools=tools,
-        debug=True,
-        system_prompt="Act as a professional and succinct AI assistant. Provide concise and accurate responses."
+        name='shege_agent',
+        #debug=True,
+        #system_prompt="Act as a professional and succinct AI assistant. Provide concise and accurate responses."
     )
 
     # Define a list of test queries
@@ -100,14 +106,19 @@ def main() -> None:
     ]
 
     print("Running example queries:\n")
+    
 
     # Iterate through each query
     for query in test_queries:
         print("📝 Query:", query)
         print("─" * 50)
         try:
-            result = agent_executor.invoke({"input": query})
-            print("✅ Result:", result)
+            result = agent_executor.invoke({
+                "messages": [{"role": "user", "content": query}]
+            })
+            # Extract and print only the response content
+            response_content = result['messages'][-1].content
+            print("✅ Response:", response_content)
         except Exception as e:
             print("❌ Error while executing the query:", e)
         print("\n")  # Add spacing between queries
