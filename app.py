@@ -55,6 +55,30 @@ def reverse_string(input_string: str) -> str:
     """
     return input_string[::-1]
 
+@tool
+# Correctly define the weather tool without additional arguments
+def weather_tool(date: str) -> str:
+    """
+    Accepts a date parameter (formatted as 'YYYY-MM-DD') and returns weather information for the given date.
+
+    Parameters:
+    date (str): The date in the format "YYYY-MM-DD".
+
+    Returns:
+    str: Weather information for the given date.
+    """
+    try:
+        today = datetime.now().strftime("%Y-%m-%d")
+        if date == today:
+            return "Sunny, 72°F"
+        else:
+            return "Rainy, 55°F"
+    except Exception as e:
+        return f"Error: {str(e)}"
+
+# Update tools array
+    tools = [calculator, get_current_time, reverse_string, weather_tool]
+
 def main() -> None:
     """
     Entry point for the Python LangChain AI Agent application.
@@ -87,7 +111,7 @@ def main() -> None:
     system_msg = SystemMessage(content="You are a helpful assistant that can perform various tasks using tools. Use the tools when necessary to provide accurate and concise answers.")
 
     # Define tools
-    tools = [calculator, get_current_time, reverse_string]
+    tools = [calculator, get_current_time, reverse_string, weather_tool]
 
     # Create an agent executor
     agent_executor = create_agent(
@@ -125,6 +149,12 @@ def main() -> None:
 
     print("🎉 Agent demo complete!")
 
+  # Check today's weather
+    today_date = datetime.now().strftime("%Y-%m-%d")
+    print("Today's weather:", weather_tool.func(today_date))
+
 if __name__ == "__main__":
     load_dotenv()  # Load environment variables from .env file
     main()
+
+  
